@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时政要闻 | 简讯新闻</title>
+    <style>
+        /* 基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        /* 白色导航栏 - 时政专版 */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #4285f4;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: #4285f4;
+        }
+        
+        /* 时政导航菜单 */
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 2rem;
+        }
+        
+        nav a {
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: #4285f4;
+        }
+        
+        nav a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #4285f4;
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover:after {
+            width: 100%;
+        }
+        
+        /* 当前页面高亮 */
+        nav a[href="#politics"] {
+            color: #4285f4;
+            font-weight: 600;
+        }
+        
+        nav a[href="#politics"]:after {
+            width: 100%;
+        }
+        
+        /* 主要内容区 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: normal;
+            color: #222;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        /* 时政新闻卡片 */
+        .political-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #4285f4;
+        }
+        
+        .political-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .political-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .political-content {
+            padding: 1.5rem;
+        }
+        
+        .political-tag {
+            display: inline-block;
+            background: #f1f3f4;
+            color: #4285f4;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .political-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: #222;
+            line-height: 1.4;
+        }
+        
+        .political-summary {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        
+        .political-meta {
+            display: flex;
+            align-items: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+        
+        .political-date {
+            margin-right: 1rem;
+            color: #ea4335;
+            font-weight: 500;
+        }
+        
+        .political-source {
+            font-style: italic;
+        }
+        
+        .importance {
+            display: inline-flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .importance-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .high {
+            background-color: #ea4335;
+        }
+        
+        .medium {
+            background-color: #fbbc05;
+        }
+        
+        .low {
+            background-color: #34a853;
+        }
+        
+        /* 新闻网格布局 */
+        .political-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            margin-top: 2rem;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            color: #222;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #4285f4;
+            display: inline-block;
+        }
+        
+        .policy-list {
+            list-style: none;
+        }
+        
+        .policy-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .policy-list a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: block;
+        }
+        
+        .policy-list a:hover {
+            color: #4285f4;
+        }
+        
+        .policy-date {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.3rem;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 1.5rem;
+            padding: 0 1rem;
+        }
+        
+        .footer-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: #4285f4;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+            }
+            
+            nav li {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            .political-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-section {
+                flex: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 白色导航栏 -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">简<span>讯</span></a>
+            <nav>
+                <ul>
+                    <li><a href="https://yuteng0412.github.io/cyt/">首页</a></li>
+                    <li><a href="网页2.html">时政</a></li>
+                    <li><a href="网页3.html">财经</a></li>
+                    <li><a href="网页4.html">科技</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title">时政要闻</h1>
+            <p class="page-subtitle">权威解读国家政策 · 实时追踪政经动态</p>
+        </div>
+        
+        <!-- 头条新闻 -->
+        <article class="political-card">
+            <img src="https://placehold.co/800x400/e9ecef/4285f4?text=时政头条" alt="时政头条新闻">
+            <div class="political-content">
+                <span class="political-tag">重要会议</span>
+                <h2 class="political-title">中共中央政治局召开会议 分析研究当前经济形势和经济工作</h2>
+                <p class="political-summary">中共中央政治局7月24日召开会议，分析研究当前经济形势，部署下半年经济工作。会议强调要坚持稳中求进工作总基调，完整、准确、全面贯彻新发展理念，加快构建新发展格局，全面深化改革开放，加大宏观政策调控力度...</p>
+                <div class="political-meta">
+                    <span class="political-date">2023年7月24日</span>
+                    <span class="political-source">来源：新华社</span>
+                    <span class="importance">
+                        <span class="importance-dot high"></span>
+                        <span>高重要性</span>
+                    </span>
+                </div>
+            </div>
+        </article>
+        
+        <!-- 新闻网格 -->
+        <div class="political-grid">
+            <article class="political-card">
+                <img src="https://placehold.co/400x250/e9ecef/ea4335?text=外交动态" alt="外交新闻">
+                <div class="political-content">
+                    <span class="political-tag">外交</span>
+                    <h2 class="political-title">王毅会见美国国务卿布林肯 就中美关系交换意见</h2>
+                    <p class="political-summary">中共中央政治局委员、中央外办主任王毅7月13日在雅加达应约会见美国国务卿布林肯。双方就中美关系及共同关心的国际地区问题进行了坦诚、深入、建设性沟通...</p>
+                    <div class="political-meta">
+                        <span class="political-date">2023年7月13日</span>
+                        <span class="importance">
+                            <span class="importance-dot high"></span>
+                            <span>高重要性</span>
+                        </span>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="political-card">
+                <img src="https://placehold.co/400x250/e9ecef/34a853?text=政策发布" alt="政策新闻">
+                <div class="political-content">
+                    <span class="political-tag">政策</span>
+                    <h2 class="political-title">国务院印发《关于促进民营经济发展壮大的意见》</h2>
+                    <p class="political-summary">《意见》从持续优化民营经济发展环境、加大对民营经济政策支持力度、强化民营经济发展法治保障等方面提出31条政策措施，促进民营经济做大做优做强...</p>
+                    <div class="political-meta">
+                        <span class="political-date">2023年7月19日</span>
+                        <span class="importance">
+                            <span class="importance-dot medium"></span>
+                            <span>中重要性</span>
+                        </span>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="political-card">
+                <img src="https://placehold.co/400x250/e9ecef/fbbc05?text=反腐倡廉" alt="反腐新闻">
+                <div class="political-content">
+                    <span class="political-tag">反腐</span>
+                    <h2 class="political-title">中央纪委国家监委公开通报十起违反中央八项规定精神典型问题</h2>
+                    <p class="political-summary">中央纪委国家监委对10起违反中央八项规定精神典型问题进行公开通报，强调要持续深化整治形式主义、官僚主义，深入治理享乐主义、奢靡之风...</p>
+                    <div class="political-meta">
+                        <span class="political-date">2023年7月18日</span>
+                        <span class="importance">
+                            <span class="importance-dot medium"></span>
+                            <span>中重要性</span>
+                        </span>
+                    </div>
+                </div>
+            </article>
+        </div>
+        
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <h3 class="sidebar-title">最新政策文件</h3>
+            <ul class="policy-list">
+                <li>
+                    <a href="#">《关于恢复和扩大消费的措施》</a>
+                    <div class="policy-date">2023年7月31日发布</div>
+                </li>
+                <li>
+                    <a href="#">《关于做好2023年全面推进乡村振兴重点工作的意见》</a>
+                    <div class="policy-date">2023年7月25日发布</div>
+                </li>
+                <li>
+                    <a href="#">《空气质量持续改善行动计划》</a>
+                    <div class="policy-date">2023年7月20日发布</div>
+                </li>
+                <li>
+                    <a href="#">《关于构建优质均衡的基本公共教育服务体系的意见》</a>
+                    <div class="policy-date">2023年7月15日发布</div>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">加入团队</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>服务</h3>
+                <ul>
+                   
+            </div>
+            <div class="footer-section">
+                <h3>法律</h3>
+                <ul>
+                    <li><a href="#">使用条款</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                    <li><a href="#">版权声明</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>关注我们</h3>
+                <ul>
+                    <li><a href="#">微信公众号</a></li>
+                   
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 简讯新闻</p>
+        </div>
+    </footer>
+</body>
+</html>
